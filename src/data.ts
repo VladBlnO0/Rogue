@@ -5,4 +5,8 @@ const playerState = {
   y: 5,
 };
 
-export { TILE_SIZE, playerState };
+const MAP_WIDTH = 20;
+const MAP_HEIGHT = 15;
+const mapData = [];
+
+export { TILE_SIZE, playerState, MAP_WIDTH, MAP_HEIGHT, mapData };
