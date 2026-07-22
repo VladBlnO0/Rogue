@@ -5,6 +5,9 @@ import "./player.ts";
 
 import levelData from "../data/level/level1.json" with { type: "json" };
 
+import { TurnManager } from "./turnManager.ts";
+import { waitForPlayerInput } from "./player.ts";
+
 (async () => {
   const app = new Application();
   await app.init({
@@ -36,21 +39,22 @@ import levelData from "../data/level/level1.json" with { type: "json" };
   const mapContainer = new Container();
   app.stage.addChild(mapContainer);
 
-  const TILE_VISUALS: Record<number, { char: string; tint: number }> = {
-    0: { char: "#", tint: 0x555555 }, // Wall (Gray)
-    1: { char: ".", tint: 0x333333 }, // Floor (Dark Gray)
-    2: { char: "+", tint: 0x8b4513 }, // Door (Brown)
-    3: { char: "≈", tint: 0x1e90ff }, // Water (Blue)
+  const TILE_VISUALS: Record<number, { character: string; tint: number }> = {
+    0: { character: "#", tint: 0x555555 }, // Wall (Gray)
+    1: { character: ".", tint: 0x333333 }, // Floor (Dark Gray)
+    2: { character: "+", tint: 0x8b4513 }, // Door (Brown)
+    3: { character: "≈", tint: 0x1e90ff }, // Water (Blue)
+    4: { character: "c", tint: 0xff0000 }, // Cobold (Brown)
   };
 
   for (let y = 0; y < data.MAP_HEIGHT; y++) {
     for (let x = 0; x < data.MAP_WIDTH; x++) {
       const tileId = data.mapData[y][x];
-      const visual = TILE_VISUALS[tileId] || TILE_VISUALS[1];
+      const visual = TILE_VISUALS[tileId] || { character: "!", tint: 0xff0000 };
 
       // NEED BITMAP
       const tile = new Text({
-        text: visual.char,
+        text: visual.character,
         style: {
           fontFamily: "monospace",
           fontSize: data.TILE_SIZE,
@@ -83,4 +87,18 @@ import levelData from "../data/level/level1.json" with { type: "json" };
     playerSprite.x = data.playerState.x * data.TILE_SIZE;
     playerSprite.y = data.playerState.y * data.TILE_SIZE;
   });
+
+  const turnManager = new TurnManager();
+
+  turnManager.addEntity({
+    id: "player",
+    isPlayer: true,
+    speed: 1,
+    energy: 0,
+    takeTurn: () => {
+      console.log("Player turn taken!");
+    },
+  });
+
+  await turnManager.runTurnLoop(waitForPlayerInput);
 })();
