@@ -1,8 +1,8 @@
 const TILE_SIZE = 32;
 
 const playerState = {
-  x: 5,
-  y: 5,
+  x: 1,
+  y: 1,
 };
 
 const MAP_WIDTH = 20;
