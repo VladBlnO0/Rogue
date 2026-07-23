@@ -1,0 +1,38 @@
+{
+  "wall": {
+    "id": 0,
+    "name": "Stone Wall",
+    "character": "#",
+    "tint": "#555555",
+    "walkable": false,
+    "transparent": false,
+    "description": "Solid stone wall."
+  },
+  "floor": {
+    "id": 1,
+    "name": "Dungeon Floor",
+    "character": ".",
+    "tint": "#333333",
+    "walkable": true,
+    "transparent": true,
+    "description": "Dusty stone ground."
+  },
+  "door_closed": {
+    "id": 2,
+    "name": "Wooden Door",
+    "character": "+",
+    "tint": "#8b4513",
+    "walkable": false,
+    "transparent": false,
+    "description": "A heavy wooden door."
+  },
+  "water": {
+    "id": 3,
+    "name": "Shallow Water",
+    "character": "≈",
+    "tint": "#1e90ff",
+    "walkable": true,
+    "transparent": true,
+    "description": "Clear water swishing quietly."
+  }
+}

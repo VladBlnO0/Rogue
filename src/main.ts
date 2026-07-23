@@ -7,6 +7,7 @@ import levelData from "../data/level/level1.json" with { type: "json" };
 
 import { TurnManager } from "./turnManager.ts";
 import { waitForPlayerInput } from "./player.ts";
+import { loadLevel } from "./map.ts";
 
 (async () => {
   const app = new Application();
@@ -21,51 +22,30 @@ import { waitForPlayerInput } from "./player.ts";
 
   await Assets.load("font.xml");
 
-  for (let y = 0; y < data.MAP_HEIGHT; y++) {
-    const row = [];
-    const rowString = levelData.layout[y];
-
-    for (let x = 0; x < data.MAP_WIDTH; x++) {
-      const char = rowString[x];
-
-      const numericValue =
-        levelData.legend[char] !== undefined ? levelData.legend[char] : 0;
-
-      row.push(numericValue);
-    }
-    data.mapData.push(row);
-  }
+  loadLevel(levelData);
 
   const mapContainer = new Container();
   app.stage.addChild(mapContainer);
 
-  const TILE_VISUALS: Record<number, { character: string; tint: number }> = {
-    0: { character: "#", tint: 0x555555 }, // Wall (Gray)
-    1: { character: ".", tint: 0x333333 }, // Floor (Dark Gray)
-    2: { character: "+", tint: 0x8b4513 }, // Door (Brown)
-    3: { character: "≈", tint: 0x1e90ff }, // Water (Blue)
-    4: { character: "c", tint: 0xff0000 }, // Cobold (Brown)
-  };
-
   for (let y = 0; y < data.MAP_HEIGHT; y++) {
     for (let x = 0; x < data.MAP_WIDTH; x++) {
-      const tileId = data.mapData[y][x];
-      const visual = TILE_VISUALS[tileId] || { character: "!", tint: 0xff0000 };
+      const tile = data.mapData[y][x];
 
-      // NEED BITMAP
-      const tile = new Text({
-        text: visual.character,
+      if (!tile) continue;
+
+      const tileSprite = new Text({
+        text: tile.character,
         style: {
           fontFamily: "monospace",
           fontSize: data.TILE_SIZE,
           fontWeight: "bold",
-          fill: visual.tint,
+          fill: tile.tint,
         },
         roundPixels: true,
       });
-      tile.x = x * data.TILE_SIZE;
-      tile.y = y * data.TILE_SIZE;
-      mapContainer.addChild(tile);
+      tileSprite.x = x * data.TILE_SIZE;
+      tileSprite.y = y * data.TILE_SIZE;
+      mapContainer.addChild(tileSprite);
     }
   }
 

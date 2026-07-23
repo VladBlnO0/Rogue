@@ -1,0 +1,22 @@
+{
+  "kobold": {
+    "id": "kobold",
+    "name": "Kobold",
+    "character": "k",
+    "tint": "#00ff00",
+    "hp": 12,
+    "speed": 1.0,
+    "attackPower": 3,
+    "ai": "chasePlayer"
+  },
+  "goblin_warrior": {
+    "id": "goblin_warrior",
+    "name": "Goblin Warrior",
+    "character": "g",
+    "tint": "#32cd32",
+    "hp": 25,
+    "speed": 0.8,
+    "attackPower": 7,
+    "ai": "chasePlayer"
+  }
+}

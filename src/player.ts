@@ -1,4 +1,5 @@
 import * as data from "./data.ts";
+import type { TileDefinition } from "./types/types";
 
 export function waitForPlayerInput(): Promise<number> {
   return new Promise((resolve) => {
@@ -92,16 +93,17 @@ export function waitForPlayerInput(): Promise<number> {
             intentY >= 0 &&
             intentY < data.MAP_HEIGHT
           ) {
-            if (data.mapData[intentY][intentX] === 1) {
+            const targetTile: TileDefinition = data.mapData[intentY][intentX];
+
+            if (targetTile.walkable) {
               data.playerState.x = intentX;
               data.playerState.y = intentY;
-              console.log("Good move!");
+              console.log(`Stepped onto ${targetTile.name}.`);
 
               globalThis.removeEventListener("keydown", handleInput);
-
               resolve(energyCost);
             } else {
-              console.log("Bad move!");
+              console.log(`Blocked by ${targetTile.name}!`);
             }
           }
         } else {
