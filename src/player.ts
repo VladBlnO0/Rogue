@@ -1,5 +1,5 @@
 import * as data from "./data.ts";
-import type { TileDefinition } from "./types/types";
+import type { TileDefinition } from "./types/types.d.ts";
 
 export function waitForPlayerInput(): Promise<number> {
   return new Promise((resolve) => {
@@ -79,9 +79,7 @@ export function waitForPlayerInput(): Promise<number> {
           break;
 
         default:
-          console.log(
-            "Invalid key pressed. Use arrow keys or numpad for movement.",
-          );
+          console.log("Invalid key pressed");
           break;
       }
 

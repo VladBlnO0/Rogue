@@ -26,19 +26,19 @@ export class TurnManager {
 
       if (timeToAdvance > 0) {
         setTimeValue(timeToAdvance);
-        console.log(`Current time: ${time.join(":")}`);
         for (const entity of this.entities) {
           entity.energy -= timeToAdvance;
         }
       }
-
       for (const entity of this.entities) {
         if (entity.energy <= 0) {
           if (entity.isPlayer) {
+            console.log(`Current time: ${time.join(":")}`);
             const energyCost = await waitForPlayerInput();
             entity.energy += energyCost;
           } else {
             entity.takeTurn();
+
             entity.energy += entity.speed;
           }
         }

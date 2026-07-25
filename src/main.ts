@@ -8,6 +8,8 @@ import levelData from "../data/level/level1.json" with { type: "json" };
 import { TurnManager } from "./turnManager.ts";
 import { waitForPlayerInput } from "./player.ts";
 import { loadLevel } from "./map.ts";
+import { playerDijkstra } from "./math/dijkstra.ts";
+import { spawnEntitiesForLevel } from "./entity.ts";
 
 (async () => {
   const app = new Application();
@@ -21,7 +23,6 @@ import { loadLevel } from "./map.ts";
   document.body.appendChild(app.canvas);
 
   await Assets.load("font.xml");
-
   loadLevel(levelData);
 
   const mapContainer = new Container();
@@ -70,15 +71,24 @@ import { loadLevel } from "./map.ts";
 
   const turnManager = new TurnManager();
 
+  playerDijkstra.update(data.playerState.x, data.playerState.y);
+
+  spawnEntitiesForLevel(levelData.entities, app.stage, turnManager);
+
   turnManager.addEntity({
     id: "player",
     isPlayer: true,
     speed: 1,
     energy: 0,
-    takeTurn: () => {
-      console.log("Player turn taken!");
-    },
+    takeTurn: () => {},
   });
 
+  const handlePlayerTurn = async (): Promise<number> => {
+    const cost = await waitForPlayerInput();
+    playerDijkstra.update(data.playerState.x, data.playerState.y);
+    return cost;
+  };
+
+  await turnManager.runTurnLoop(handlePlayerTurn);
   await turnManager.runTurnLoop(waitForPlayerInput);
 })();
