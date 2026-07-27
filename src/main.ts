@@ -1,17 +1,19 @@
 import { Application, Container, Assets, Text } from "pixi.js";
 
 import * as data from "./data.ts";
-import "./player.ts";
+import "./player/player.ts";
 
 import levelData from "../data/level/level1.json" with { type: "json" };
 
 import { TurnManager } from "./turnManager.ts";
-import { waitForPlayerInput } from "./player.ts";
+import { waitForPlayerInput } from "./player/player.ts";
 import { loadLevel } from "./map.ts";
 import { playerDijkstra } from "./math/dijkstra.ts";
 import { spawnEntitiesForLevel } from "./entity.ts";
 
 (async () => {
+  console.dir(data.mapData);
+
   const app = new Application();
   await app.init({
     background: "#111111",
@@ -84,7 +86,7 @@ import { spawnEntitiesForLevel } from "./entity.ts";
   });
 
   const handlePlayerTurn = async (): Promise<number> => {
-    const cost = await waitForPlayerInput();
+    const cost = await waitForPlayerInput(turnManager);
     playerDijkstra.update(data.playerState.x, data.playerState.y);
     return cost;
   };

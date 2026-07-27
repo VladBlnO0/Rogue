@@ -12,14 +12,20 @@ export class TurnManager {
   private entities: Entity[] = [];
 
   addEntity(entity: Entity) {
-    this.entities.push(entity);
+    if (entity.isPlayer) {
+      this.entities.unshift(entity);
+    } else {
+      this.entities.push(entity);
+    }
   }
 
   removeEntity(id: string) {
     this.entities = this.entities.filter((e) => e.id !== id);
   }
 
-  async runTurnLoop(waitForPlayerInput: () => Promise<number>) {
+  async runTurnLoop(
+    waitForPlayerInput: (turnManager: TurnManager) => Promise<number>,
+  ) {
     while (true) {
       const minEnergy = Math.min(...this.entities.map((e) => e.energy));
       const timeToAdvance = Math.max(0, minEnergy);
@@ -33,9 +39,17 @@ export class TurnManager {
       for (const entity of this.entities) {
         if (entity.energy <= 0) {
           if (entity.isPlayer) {
-            console.log(`Current time: ${time.join(":")}`);
-            const energyCost = await waitForPlayerInput();
+            const energyCost = await waitForPlayerInput(this);
             entity.energy += energyCost;
+
+            if (energyCost > 0) {
+              console.debug(
+                `Player took an action costing ${energyCost} energy`,
+              );
+              console.log(`Current time: ${time.join(":")}`);
+            } else {
+              console.debug("Player did nothing");
+            }
           } else {
             entity.takeTurn();
 

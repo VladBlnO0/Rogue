@@ -1,4 +1,4 @@
-import type { TileDefinition, MonsterDefinition } from "./types/types.d.ts";
+import type { TileDefinition } from "./types/types.d.ts";
 
 const TILE_SIZE: number = 32;
 

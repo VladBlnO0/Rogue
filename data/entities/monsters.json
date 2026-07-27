@@ -1,4 +1,14 @@
 {
+  "skeleton": {
+    "id": "skeleton",
+    "name": "Skeleton",
+    "character": "s",
+    "tint": "#808080",
+    "hp": 15,
+    "speed": 0.8,
+    "attackPower": 5,
+    "ai": "chasePlayer"
+  },
   "kobold": {
     "id": "kobold",
     "name": "Kobold",

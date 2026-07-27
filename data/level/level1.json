@@ -26,8 +26,20 @@
     "≈": "water"
   },
   "entities": [
-    { "type": "skeleton", "x": 12, "y": 1 },
-    { "type": "kobold", "x": 17, "y": 10 },
-    { "type": "goblin_warrior", "x": 5, "y": 8 }
+    {
+      "type": "skeleton",
+      "x": 12,
+      "y": 1
+    },
+    {
+      "type": "kobold",
+      "x": 17,
+      "y": 10
+    },
+    {
+      "type": "goblin_warrior",
+      "x": 5,
+      "y": 7
+    }
   ]
 }

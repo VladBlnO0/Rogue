@@ -1,72 +1,10 @@
-import { Container, Text } from "pixi.js";
-import * as data from "./data.ts";
+import { Container } from "pixi.js";
 import monsterDefs from "../data/entities/monsters.json" with { type: "json" };
 import type { MonsterDefinition } from "./types/types.d.ts";
-import { playerDijkstra } from "./math/dijkstra.ts";
 import type { TurnManager } from "./turnManager.ts";
-
 export const MONSTER_TYPES: Record<string, MonsterDefinition> = monsterDefs;
 
-export class Monster {
-  public id: string;
-  public name: string;
-  public x: number;
-  public y: number;
-  public speed: number;
-  public hp: number;
-  public actionCost: number;
-  public sprite: Text;
-
-  constructor(
-    id: string,
-    definition: MonsterDefinition,
-    x: number,
-    y: number,
-    stage: Container,
-  ) {
-    this.id = id;
-    this.name = definition.name;
-    this.x = x;
-    this.y = y;
-    this.speed = definition.speed;
-    this.hp = definition.hp;
-    this.actionCost = 1; // 1 second turn cost
-
-    this.sprite = new Text({
-      text: definition.character,
-      style: {
-        fontFamily: "monospace",
-        fontSize: data.TILE_SIZE,
-        fontWeight: "bold",
-        fill: definition.tint,
-      },
-      roundPixels: true,
-    });
-
-    this.sprite.x = x * data.TILE_SIZE;
-    this.sprite.y = y * data.TILE_SIZE;
-    stage.addChild(this.sprite);
-  }
-
-  public takeTurn(): void {
-    const nextStep = playerDijkstra.getNextStep(this.x, this.y);
-
-    if (
-      nextStep.x === data.playerState.x &&
-      nextStep.y === data.playerState.y
-    ) {
-      console.log(`${this.name} attacks the player!`);
-      return;
-    }
-
-    this.x = nextStep.x;
-    this.y = nextStep.y;
-
-    this.sprite.x = this.x * data.TILE_SIZE;
-    this.sprite.y = this.y * data.TILE_SIZE;
-  }
-}
-
+import { Monster } from "./npc/monster.ts";
 export const activeMonsters: Monster[] = [];
 
 /**
@@ -89,7 +27,7 @@ export function spawnEntitiesForLevel(
     }
 
     const monsterId = `${spawn.type}_${index}`;
-    const monster = new Monster(monsterId, definition, spawn.x, spawn.y, stage);
+    const monster = new Monster(monsterId, definition, spawn.x, spawn.y, stage, turnManager);
     activeMonsters.push(monster);
 
     turnManager.addEntity({
