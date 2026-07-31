@@ -48,7 +48,7 @@ export class TurnManager {
           } else {
             entity.takeTurn();
 
-            entity.energy += entity.speed;
+            entity.energy += 1 / entity.speed;
           }
         }
       }
