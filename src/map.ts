@@ -15,6 +15,11 @@ export function loadLevel(level: types.LevelJSON): void {
   data.setMapWidth(level.width);
   data.setMapHeight(level.height);
 
+  if (level.playerStart) {
+    data.playerState.x = level.playerStart.x;
+    data.playerState.y = level.playerStart.y;
+  }
+
   data.mapData.length = 0;
 
   for (let y = 0; y < level.height; y++) {

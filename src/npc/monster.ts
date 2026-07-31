@@ -72,7 +72,6 @@ export class Monster {
     }
 
     const nextStep = playerDijkstra.getNextStep(this.x, this.y);
-    console.log(`${this.name} makes move!`);
 
     if (
       nextStep.x === data.playerState.x &&

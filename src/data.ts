@@ -3,8 +3,8 @@ import type * as types from "./types/types.d.ts";
 const TILE_SIZE: number = 32;
 
 const playerState: { x: number; y: number } = {
-  x: 1,
-  y: 1,
+  x: 0,
+  y: 0,
 };
 
 let MAP_WIDTH: number = 0;

@@ -23,6 +23,7 @@ export interface LevelJSON {
   name: string;
   width: number;
   height: number;
+  playerStart?: { x: number; y: number };
   layout: string[];
   legend: Record<string, string>;
   entities?: { type: string; x: number; y: number }[];

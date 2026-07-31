@@ -25,6 +25,10 @@
     "+": "door_closed",
     "≈": "water"
   },
+  "playerStart": {
+    "x": 1,
+    "y": 1
+  },
   "entities": [
     {
       "type": "skeleton",
