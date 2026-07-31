@@ -1,17 +1,11 @@
 import { setTimeValue, time } from "./time.ts";
 
-export interface Entity {
-  id: string;
-  isPlayer: boolean;
-  speed: number;
-  energy: number;
-  takeTurn: () => void;
-}
+import type * as types from "./types/types.d.ts";
 
 export class TurnManager {
-  private entities: Entity[] = [];
+  private entities: types.Entity[] = [];
 
-  addEntity(entity: Entity) {
+  addEntity(entity: types.Entity) {
     if (entity.isPlayer) {
       this.entities.unshift(entity);
     } else {
@@ -36,6 +30,7 @@ export class TurnManager {
           entity.energy -= timeToAdvance;
         }
       }
+
       for (const entity of this.entities) {
         if (entity.energy <= 0) {
           if (entity.isPlayer) {

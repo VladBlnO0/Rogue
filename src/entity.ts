@@ -1,17 +1,15 @@
 import { Container } from "pixi.js";
 import monsterDefs from "../data/entities/monsters.json" with { type: "json" };
-import type { MonsterDefinition } from "./types/types.d.ts";
+import type * as types from "./types/types.d.ts";
 import type { TurnManager } from "./turnManager.ts";
-export const MONSTER_TYPES: Record<string, MonsterDefinition> = monsterDefs;
+export const MONSTER_TYPES: Record<string, types.MonsterDefinition> =
+  monsterDefs;
 
 import { Monster } from "./npc/monster.ts";
 export const activeMonsters: Monster[] = [];
 
-/**
- * Spawns monsters from Level JSON spawn list and registers them with TurnManager
- */
 export function spawnEntitiesForLevel(
-  levelEntities: { type: string; x: number; y: number }[] | undefined,
+  levelEntities: types.LevelJSON["entities"],
   stage: Container,
   turnManager: TurnManager,
 ): void {
@@ -27,7 +25,14 @@ export function spawnEntitiesForLevel(
     }
 
     const monsterId = `${spawn.type}_${index}`;
-    const monster = new Monster(monsterId, definition, spawn.x, spawn.y, stage, turnManager);
+    const monster = new Monster(
+      monsterId,
+      definition,
+      spawn.x,
+      spawn.y,
+      stage,
+      turnManager,
+    );
     activeMonsters.push(monster);
 
     turnManager.addEntity({

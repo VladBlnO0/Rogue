@@ -49,6 +49,7 @@ export class Monster {
       },
       roundPixels: true,
     });
+    this.sprite.zIndex = 2;
 
     this.sprite.x = x * data.TILE_SIZE;
     this.sprite.y = y * data.TILE_SIZE;
@@ -132,6 +133,6 @@ export class Monster {
 
     this.sprite.text = corpseTile.character;
     this.sprite.style.fill = corpseTile.tint;
-    this.sprite.zIndex = -1;
+    this.sprite.zIndex = 1;
   }
 }

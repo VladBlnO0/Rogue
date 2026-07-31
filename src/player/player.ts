@@ -78,7 +78,7 @@ export function waitForPlayerInput(turnManager: TurnManager): Promise<number> {
           if (monster) {
             console.log(`You bump into ${monster.name}!`);
             globalThis.removeEventListener("keydown", handleInput);
-            resolve(null);
+            resolve(1);
             return;
           }
 
@@ -121,10 +121,16 @@ export function waitForPlayerInput(turnManager: TurnManager): Promise<number> {
               if (targetMonster.hp <= 0) {
                 console.log(`You defeated ${targetMonster.name}!`);
               }
-            } else {
-              const targetTile = data.mapData[targetX][targetY];
-
-              console.log(`You swing your weapon at ${targetTile.name}!`);
+            } else if (
+              targetY >= 0 &&
+              targetY < data.MAP_HEIGHT &&
+              targetX >= 0 &&
+              targetX < data.MAP_WIDTH
+            ) {
+              const targetTile = data.mapData[targetY][targetX];
+              console.log(
+                `You swing your weapon at ${targetTile?.name || "empty air"}!`,
+              );
             }
 
             resolve(1);

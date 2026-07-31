@@ -6,7 +6,8 @@
     "tint": "#555555",
     "walkable": false,
     "transparent": false,
-    "description": "Solid stone wall."
+    "description": "Solid stone wall.",
+    "z": 0
   },
   "floor": {
     "id": 1,
@@ -15,7 +16,8 @@
     "tint": "#333333",
     "walkable": true,
     "transparent": true,
-    "description": "Dusty stone ground."
+    "description": "Dusty stone ground.",
+    "z": -1
   },
   "door_closed": {
     "id": 2,
@@ -24,7 +26,8 @@
     "tint": "#8b4513",
     "walkable": false,
     "transparent": false,
-    "description": "A heavy wooden door."
+    "description": "A heavy wooden door.",
+    "z": 0
   },
   "water": {
     "id": 3,
@@ -33,6 +36,7 @@
     "tint": "#1e90ff",
     "walkable": true,
     "transparent": true,
-    "description": "Clear water swishing quietly."
+    "description": "Clear water swishing quietly.",
+    "z": -1
   }
 }

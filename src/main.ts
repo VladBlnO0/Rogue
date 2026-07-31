@@ -63,6 +63,7 @@ import { spawnEntitiesForLevel } from "./entity.ts";
     },
     roundPixels: true,
   });
+  playerSprite.zIndex = 2;
   app.stage.addChild(playerSprite);
 
   // --- 60 FPS ---
@@ -73,10 +74,6 @@ import { spawnEntitiesForLevel } from "./entity.ts";
 
   const turnManager = new TurnManager();
 
-  playerDijkstra.update(data.playerState.x, data.playerState.y);
-
-  spawnEntitiesForLevel(levelData.entities, app.stage, turnManager);
-
   turnManager.addEntity({
     id: "player",
     isPlayer: true,
@@ -84,6 +81,10 @@ import { spawnEntitiesForLevel } from "./entity.ts";
     energy: 0,
     takeTurn: () => {},
   });
+  
+  playerDijkstra.update(data.playerState.x, data.playerState.y);
+
+  spawnEntitiesForLevel(levelData.entities, app.stage, turnManager);
 
   const handlePlayerTurn = async (): Promise<number> => {
     const cost = await waitForPlayerInput(turnManager);

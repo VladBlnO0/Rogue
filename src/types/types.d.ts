@@ -18,3 +18,20 @@ export interface MonsterDefinition {
   attackPower: number;
   ai: string;
 }
+
+export interface LevelJSON {
+  name: string;
+  width: number;
+  height: number;
+  layout: string[];
+  legend: Record<string, string>;
+  entities?: { type: string; x: number; y: number }[];
+}
+
+export interface Entity {
+  id: string;
+  isPlayer: boolean;
+  speed: number;
+  energy: number;
+  takeTurn: () => void;
+}

@@ -1,4 +1,4 @@
-import type { TileDefinition } from "./types/types.d.ts";
+import type * as types from "./types/types.d.ts";
 
 const TILE_SIZE: number = 32;
 
@@ -17,6 +17,6 @@ export function setMapHeight(height: number): void {
   MAP_HEIGHT = height;
 }
 
-const mapData: TileDefinition[][] = [];
+const mapData: types.TileDefinition[][] = [];
 
 export { TILE_SIZE, playerState, MAP_WIDTH, MAP_HEIGHT, mapData };
