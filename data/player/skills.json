@@ -1,0 +1,47 @@
+{
+  "running": {
+    "name": "Running",
+    "description": "The ability to move quickly on foot",
+    "difficulty": 2,
+    "related_skills": [
+      "Endurance",
+      "Agility"
+    ]
+  },
+  "archery": {
+    "name": "Archery",
+    "description": "The skill of using a bow to shoot",
+    "difficulty": 3,
+    "related_skills": [
+      "Marksmanship",
+      "Stealth"
+    ]
+  },
+  "alchemy": {
+    "name": "Alchemy",
+    "description": "The practice of creating magical substances",
+    "difficulty": 4,
+    "related_skills": [
+      "Herbalism",
+      "Magic"
+    ]
+  },
+  "stealth": {
+    "name": "Stealth",
+    "description": "The ability to move silently and remain undetected",
+    "difficulty": 3,
+    "related_skills": [
+      "Agility",
+      "Perception"
+    ]
+  },
+  "swordsmanship": {
+    "name": "Swordsmanship",
+    "description": "The art of fighting with a sword",
+    "difficulty": 4,
+    "related_skills": [
+      "Strength",
+      "Agility"
+    ]
+  }
+}

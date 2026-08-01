@@ -4,6 +4,7 @@ import type * as types from "./types/types.d.ts";
 
 export class TurnManager {
   private entities: types.Entity[] = [];
+  public isGameOver: boolean = false;
 
   addEntity(entity: types.Entity) {
     if (entity.isPlayer) {
@@ -17,10 +18,15 @@ export class TurnManager {
     this.entities = this.entities.filter((e) => e.id !== id);
   }
 
+  gameOver() {
+    this.isGameOver = true;
+    console.log("--- GAME OVER ---");
+  }
+
   async runTurnLoop(
     waitForPlayerInput: (turnManager: TurnManager) => Promise<number>,
   ) {
-    while (true) {
+    while (!this.isGameOver) {
       const minEnergy = Math.min(...this.entities.map((e) => e.energy));
       const timeToAdvance = Math.max(0, minEnergy);
 
@@ -32,6 +38,8 @@ export class TurnManager {
       }
 
       for (const entity of this.entities) {
+        if (this.isGameOver) break;
+
         if (entity.energy <= 0) {
           if (entity.isPlayer) {
             const energyCost = await waitForPlayerInput(this);
@@ -52,6 +60,7 @@ export class TurnManager {
           }
         }
       }
+      console.log("--- GAME OVER ---");
     }
   }
 }

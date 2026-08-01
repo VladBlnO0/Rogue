@@ -36,3 +36,32 @@ export interface Entity {
   energy: number;
   takeTurn: () => void;
 }
+
+export interface SkillDefinition {
+  name: string;
+  description: string;
+  difficulty: number;
+  related_skills: string[];
+}
+
+export interface SpellDefinition {
+  name: string;
+  description: string;
+  level: number;
+  mana_cost: number;
+  cooldown: number;
+}
+
+export interface ClassDefinition {
+  id: string;
+  name: string;
+  character: string;
+  tint: string;
+  hp: number;
+  speed: number;
+  attackPower: number;
+  defense: number;
+  mana: number;
+  startingSkills: string[];
+  startingSpells?: string[];
+}

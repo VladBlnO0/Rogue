@@ -1,0 +1,54 @@
+{
+  "warrior": {
+    "id": "warrior",
+    "name": "Warrior",
+    "character": "@",
+    "tint": "#c0c0c0",
+    "hp": 25,
+    "speed": 1.0,
+    "attackPower": 5,
+    "defense": 3,
+    "mana": 0,
+    "startingSkills": [
+      "swordsmanship",
+      "running"
+    ],
+    "startingSpells": []
+  },
+  "mage": {
+    "id": "mage",
+    "name": "Mage",
+    "character": "@",
+    "tint": "#4169e1",
+    "hp": 15,
+    "speed": 1.0,
+    "attackPower": 2,
+    "defense": 1,
+    "mana": 50,
+    "startingSkills": [
+      "alchemy"
+    ],
+    "startingSpells": [
+      "fireball",
+      "healing",
+      "teleportation"
+    ]
+  },
+  "rogue": {
+    "id": "rogue",
+    "name": "Rogue",
+    "character": "@",
+    "tint": "#ff4500",
+    "hp": 18,
+    "speed": 1.2,
+    "attackPower": 4,
+    "defense": 2,
+    "mana": 10,
+    "startingSkills": [
+      "stealth",
+      "running",
+      "archery"
+    ],
+    "startingSpells": []
+  }
+}

@@ -1,6 +1,7 @@
 import * as data from "../data.ts";
 import { activeMonsters } from "../entity.ts";
 import type { Monster } from "../npc/monster.ts";
+import { getPlayer } from "../player/player.ts";
 
 export function getMonsterAt(
   x: number,
@@ -13,6 +14,6 @@ export function getMonsterAt(
 }
 
 export function isTileOccupied(x: number, y: number): boolean {
-  if (data.playerState.x === x && data.playerState.y === y) return true;
+  if (getPlayer().x === x && getPlayer().y === y) return true;
   return getMonsterAt(x, y) !== undefined;
 }

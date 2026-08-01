@@ -1,10 +1,12 @@
 import * as data from "../data.ts";
-import { Container, Text } from "pixi.js";
+import type { Container } from "pixi.js";
+import { Text } from "pixi.js";
 import type { MonsterDefinition } from "../types/types.d.ts";
 import { playerDijkstra } from "../math/dijkstra.ts";
 import * as isOccupied from "../func/isOccupied.ts";
 import type { TurnManager } from "../turnManager.ts";
 import { activeMonsters } from "../entity.ts";
+import { getPlayer } from "../player/player.ts";
 
 export class Monster {
   public id: string;
@@ -19,7 +21,7 @@ export class Monster {
   public actionCost: number;
   public sprite: Text;
 
-  private _turnManager: TurnManager;
+  private turnManager: TurnManager;
 
   constructor(
     id: string,
@@ -27,7 +29,7 @@ export class Monster {
     x: number,
     y: number,
     stage: Container,
-    _turnManager: TurnManager,
+    turnManager: TurnManager,
   ) {
     this.id = id;
     this.name = definition.name;
@@ -54,47 +56,75 @@ export class Monster {
     this.sprite.x = x * data.TILE_SIZE;
     this.sprite.y = y * data.TILE_SIZE;
     stage.addChild(this.sprite);
+
+    this.turnManager = turnManager;
   }
 
   public takeTurn(): void {
-    if (this.hp <= 0) {
-      console.log(`${this.name} has been defeated!`);
-      return;
-    }
+    if (!this.isAlive()) return;
 
-    const playerDistance =
-      Math.abs(this.x - data.playerState.x) +
-      Math.abs(this.y - data.playerState.y);
-
-    if (playerDistance > 10) {
-      console.debug(`${this.name} is too far from the player and does nothing`);
-      return;
-    }
+    if (!this.isPlayerInRange(10)) return;
 
     const nextStep = playerDijkstra.getNextStep(this.x, this.y);
 
-    if (
-      nextStep.x === data.playerState.x &&
-      nextStep.y === data.playerState.y
-    ) {
-      console.log(`${this.name} attacks the player!`);
+    console.log(getPlayer().x, getPlayer().y);
+    
+    if (this.isPlayerAt(nextStep.x, nextStep.y)) {
+      this.attackPlayer();
       return;
     }
 
-    const otherMonster = isOccupied.getMonsterAt(
-      nextStep.x,
-      nextStep.y,
-      this.id,
-    );
+    this.tryMoveTo(nextStep.x, nextStep.y);
+  }
+
+  private isAlive(): boolean {
+    return this.hp > 0;
+  }
+
+  private isPlayerInRange(maxDistance: number): boolean {
+    const player = getPlayer();
+    const distance = Math.abs(this.x - player.x) + Math.abs(this.y - player.y);
+
+    if (distance > maxDistance) {
+      console.debug(
+        `${this.name} is too far from the player and does nothing.`,
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  private isPlayerAt(targetX: number, targetY: number): boolean {
+    const player = getPlayer();
+    return player.x === targetX && player.y === targetY;
+  }
+
+  private attackPlayer(): void {
+    console.log(`${this.name} attacks the player!`);
+    const player = getPlayer();
+    player.takeDamage(10, this.turnManager);
+  }
+
+  private tryMoveTo(targetX: number, targetY: number): void {
+    const otherMonster = isOccupied.getMonsterAt(targetX, targetY, this.id);
 
     if (otherMonster) {
       console.log(`${this.name} is blocked by ${otherMonster.name}.`);
       return;
     }
 
-    this.x = nextStep.x;
-    this.y = nextStep.y;
+    if (targetX === getPlayer().x && targetY === getPlayer().y) {
+      console.log(`${this.name} is blocked by player.`);
+      return;
+    }
 
+    this.x = targetX;
+    this.y = targetY;
+    this.updateSpritePosition();
+  }
+
+  private updateSpritePosition(): void {
     this.sprite.x = this.x * data.TILE_SIZE;
     this.sprite.y = this.y * data.TILE_SIZE;
   }
@@ -113,11 +143,8 @@ export class Monster {
   public die(turnManager: TurnManager): void {
     console.log(`${this.name} has been slain!`);
 
-    // if (this.sprite) {
-    //   this.sprite.destroy();
-    // }
-
     const index = activeMonsters.indexOf(this);
+
     if (index !== -1) {
       activeMonsters.splice(index, 1);
     }

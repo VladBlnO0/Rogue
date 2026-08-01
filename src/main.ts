@@ -6,10 +6,11 @@ import "./player/player.ts";
 import levelData from "../data/level/level1.json" with { type: "json" };
 
 import { TurnManager } from "./turnManager.ts";
-import { waitForPlayerInput } from "./player/player.ts";
+import { waitForPlayerInput } from "./player/controls.ts";
 import { loadLevel } from "./map.ts";
 import { playerDijkstra } from "./math/dijkstra.ts";
 import { spawnEntitiesForLevel } from "./entity.ts";
+import { createPlayer, getPlayer } from "./player/player.ts";
 
 (async () => {
   console.dir(data.mapData);
@@ -52,6 +53,14 @@ import { spawnEntitiesForLevel } from "./entity.ts";
     }
   }
 
+  const player = createPlayer("Hero", "mage", getPlayer().x, getPlayer().y);
+
+  console.log("Player Class:", player.className);
+  console.log("HP:", player.hp, "/", player.maxHp);
+  console.log("Mana:", player.mana);
+  console.log("Learned Skills:", Array.from(player.skills.keys()));
+  console.log("Known Spells:", Array.from(player.spells.keys()));
+
   // NEED BITMAP
   const playerSprite = new Text({
     text: "@",
@@ -68,8 +77,8 @@ import { spawnEntitiesForLevel } from "./entity.ts";
 
   // --- 60 FPS ---
   app.ticker.add((_time) => {
-    playerSprite.x = data.playerState.x * data.TILE_SIZE;
-    playerSprite.y = data.playerState.y * data.TILE_SIZE;
+    playerSprite.x = getPlayer().x * data.TILE_SIZE;
+    playerSprite.y = getPlayer().y * data.TILE_SIZE;
   });
 
   const turnManager = new TurnManager();
@@ -81,14 +90,14 @@ import { spawnEntitiesForLevel } from "./entity.ts";
     energy: 0,
     takeTurn: () => {},
   });
-  
-  playerDijkstra.update(data.playerState.x, data.playerState.y);
+
+  playerDijkstra.update(getPlayer().x, getPlayer().y);
 
   spawnEntitiesForLevel(levelData.entities, app.stage, turnManager);
 
   const handlePlayerTurn = async (): Promise<number> => {
     const cost = await waitForPlayerInput(turnManager);
-    playerDijkstra.update(data.playerState.x, data.playerState.y);
+    playerDijkstra.update(getPlayer().x, getPlayer().y);
     return cost;
   };
 

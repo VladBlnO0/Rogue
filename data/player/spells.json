@@ -1,0 +1,23 @@
+{
+  "teleportation": {
+    "name": "Teleportation",
+    "description": "Allows the user to instantly move from one location to another",
+    "level": 5,
+    "mana_cost": 50,
+    "cooldown": 10
+  },
+  "fireball": {
+    "name": "Fireball",
+    "description": "Casts a projectile that explodes upon impact",
+    "level": 3,
+    "mana_cost": 30,
+    "cooldown": 5
+  },
+  "healing": {
+    "name": "Healing",
+    "description": "Restores a portion of the user's health over time",
+    "level": 2,
+    "mana_cost": 20,
+    "cooldown": 8
+  }
+}

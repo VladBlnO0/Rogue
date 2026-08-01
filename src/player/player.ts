@@ -1,163 +1,146 @@
 import * as data from "../data.ts";
-import * as isOccupied from "../func/isOccupied.ts";
 import type { TurnManager } from "../turnManager.ts";
 
-export function getDirectionFromKey(
-  key: string,
-): { dx: number; dy: number } | null {
-  switch (key) {
-    case "k":
-      return { dx: 0, dy: -1 };
-    case "j":
-      return { dx: 0, dy: 1 };
-    case "h":
-      return { dx: -1, dy: 0 };
-    case "l":
-      return { dx: 1, dy: 0 };
+import type * as types from "../types/types.d.ts";
+import classDefs from "../../data/player/classes.json" with { type: "json" };
+import skillDefs from "../../data/player/skills.json" with { type: "json" };
+import spellDefs from "../../data/player/spells.json" with { type: "json" };
+export const CLASSES: Record<string, types.ClassDefinition> = classDefs;
+export const SKILLS: Record<string, types.SkillDefinition> = skillDefs;
+export const SPELLS: Record<string, types.SpellDefinition> = spellDefs;
 
-    case "y":
-      return { dx: -1, dy: -1 };
-    case "u":
-      return { dx: 1, dy: -1 };
-    case "b":
-      return { dx: -1, dy: 1 };
-    case "n":
-      return { dx: 1, dy: 1 };
+export class Player {
+  public id: string;
+  public name: string;
+  public className: string;
+  public level: number;
 
-    default:
-      return null;
+  public x: number;
+  public y: number;
+
+  public hp: number;
+  public maxHp: number;
+  public mana: number;
+  public maxMana: number;
+  public speed: number;
+  public attackPower: number;
+  public defense: number;
+
+  public skills: Map<string, types.SkillDefinition> = new Map();
+  public spells: Map<string, types.SpellDefinition> = new Map();
+
+  constructor(
+    id: string,
+    name: string,
+    classKey: string,
+    startX: number,
+    startY: number,
+  ) {
+    const classData = CLASSES[classKey] || CLASSES["warrior"];
+
+    this.id = id;
+    this.name = name;
+    this.className = classData.name;
+    this.level = 1;
+
+    this.x = startX;
+    this.y = startY;
+
+    this.hp = classData.hp;
+    this.maxHp = classData.hp;
+    this.mana = classData.mana;
+    this.maxMana = classData.mana;
+    this.speed = classData.speed;
+    this.attackPower = classData.attackPower;
+    this.defense = classData.defense;
+
+    for (const skillKey of classData.startingSkills) {
+      if (SKILLS[skillKey]) {
+        this.skills.set(skillKey, SKILLS[skillKey]);
+      } else {
+        console.warn(`Skill "${skillKey}" not found in skills.json`);
+      }
+    }
+
+    if (classData.startingSpells) {
+      for (const spellKey of classData.startingSpells) {
+        if (SPELLS[spellKey]) {
+          this.spells.set(spellKey, SPELLS[spellKey]);
+        } else {
+          console.warn(`Spell "${spellKey}" not found in spells.json`);
+        }
+      }
+    }
+
+    console.log(
+      `Initialized ${this.name} (${this.className}) with ${this.skills.size} skills and ${this.spells.size} spells.`,
+    );
+  }
+
+  public hasSkill(skillKey: string): boolean {
+    return this.skills.has(skillKey);
+  }
+
+  public hasSpell(spellKey: string): boolean {
+    return this.spells.has(spellKey);
+  }
+
+  public takeDamage(amount: number, turnManager: TurnManager): void {
+    const actualDamage = Math.max(1, amount - this.defense);
+    this.hp -= actualDamage;
+    console.log(
+      `Player took ${actualDamage} damage! (${this.hp}/${this.maxHp} HP left)`,
+    );
+
+    if (this.hp <= 0) {
+      this.die(turnManager);
+    }
+  }
+
+  public die(turnManager: TurnManager): void {
+    console.log("GAME OVER! You have been slain.");
+    turnManager.gameOver();
+
+    // if (this.sprite) {
+    //   this.sprite.destroy();
+    // }
+
+    const corpseTile = data.mapData[this.y][this.x];
+    corpseTile.character = "%";
+    corpseTile.tint = "#8B0000";
+    corpseTile.walkable = true;
+
+    data.mapData[this.y][this.x] = corpseTile;
+
+    // this.sprite.text = corpseTile.character;
+    // this.sprite.style.fill = corpseTile.tint;
+    // this.sprite.zIndex = 1;
   }
 }
 
-export function waitForDirectionInput(): Promise<{
-  dx: number;
-  dy: number;
-} | null> {
-  return new Promise((resolve) => {
-    const handleDirectionKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        console.log("Action cancelled");
-        globalThis.removeEventListener("keydown", handleDirectionKey);
-        resolve(null);
-        return;
-      }
+let activePlayer: Player | null = null;
 
-      const dir = getDirectionFromKey(e.key);
-
-      if (dir) {
-        globalThis.removeEventListener("keydown", handleDirectionKey);
-        resolve(dir);
-      } else {
-        console.log("Invalid direction!");
-      }
-    };
-
-    globalThis.addEventListener("keydown", handleDirectionKey);
-  });
+export function getPlayer(): Player {
+  if (!activePlayer) {
+    activePlayer = new Player(
+      "player",
+      "Hero",
+      "warrior",
+      data.playerState.x,
+      data.playerState.y,
+    );
+  }
+  return activePlayer;
 }
 
-export function waitForPlayerInput(turnManager: TurnManager): Promise<number> {
-  return new Promise((resolve) => {
-    const handleInput = (e: KeyboardEvent) => {
-      const moveDir = getDirectionFromKey(e.key);
-
-      if (moveDir) {
-        const intentX = data.playerState.x + moveDir.dx;
-        const intentY = data.playerState.y + moveDir.dy;
-
-        if (
-          intentX >= 0 &&
-          intentX < data.MAP_WIDTH &&
-          intentY >= 0 &&
-          intentY < data.MAP_HEIGHT
-        ) {
-          const targetTile = data.mapData[intentY][intentX];
-
-          const monster = isOccupied.getMonsterAt(intentX, intentY);
-
-          if (monster) {
-            console.log(`You bump into ${monster.name}!`);
-            globalThis.removeEventListener("keydown", handleInput);
-            resolve(1);
-            return;
-          }
-
-          if (targetTile && targetTile.walkable) {
-            data.playerState.x = intentX;
-            data.playerState.y = intentY;
-
-            globalThis.removeEventListener("keydown", handleInput);
-            resolve(1);
-            return;
-          } else {
-            console.log(`Blocked by ${targetTile.name}!`);
-          }
-        }
-        return;
-      }
-
-      // --- Targeted actions ---
-      switch (e.key) {
-        case "a": {
-          globalThis.removeEventListener("keydown", handleInput);
-          console.log("Attack in which direction? (Esc to cancel)");
-
-          waitForDirectionInput().then((dir) => {
-            if (!dir) {
-              globalThis.addEventListener("keydown", handleInput);
-              return;
-            }
-
-            const targetX = data.playerState.x + dir.dx;
-            const targetY = data.playerState.y + dir.dy;
-
-            const targetMonster = isOccupied.getMonsterAt(targetX, targetY);
-
-            if (targetMonster) {
-              console.log(`You strike the ${targetMonster.name}!`);
-
-              targetMonster.takeDamage(10, turnManager);
-
-              if (targetMonster.hp <= 0) {
-                console.log(`You defeated ${targetMonster.name}!`);
-              }
-            } else if (
-              targetY >= 0 &&
-              targetY < data.MAP_HEIGHT &&
-              targetX >= 0 &&
-              targetX < data.MAP_WIDTH
-            ) {
-              const targetTile = data.mapData[targetY][targetX];
-              console.log(
-                `You swing your weapon at ${targetTile?.name || "empty air"}!`,
-              );
-            }
-
-            resolve(1);
-          });
-          break;
-        }
-
-        case "c": {
-          console.log("You spend some time building a campfire...");
-          globalThis.removeEventListener("keydown", handleInput);
-          resolve(60);
-          break;
-        }
-
-        case "0": {
-          console.log("You wait for a moment...");
-          globalThis.removeEventListener("keydown", handleInput);
-          resolve(1);
-          break;
-        }
-
-        default:
-          console.log("Unrecognized command");
-          break;
-      }
-    };
-
-    globalThis.addEventListener("keydown", handleInput);
-  });
+export function createPlayer(
+  name: string,
+  classKey: string,
+  startX: number,
+  startY: number,
+): Player {
+  activePlayer = new Player("player", name, classKey, startX, startY);
+  data.playerState.x = startX;
+  data.playerState.y = startY;
+  return activePlayer;
 }

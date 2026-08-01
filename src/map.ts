@@ -2,6 +2,7 @@ import tileDefs from "../data/tile/tiles.json" with { type: "json" };
 import monsterDefs from "../data/entities/monsters.json" with { type: "json" };
 import * as data from "./data.ts";
 import type * as types from "./types/types.d.ts";
+import { getPlayer } from "./player/player.ts";
 
 export const TILES: Record<string, types.TileDefinition> = tileDefs;
 export const MONSTERS: Record<string, types.MonsterDefinition> = monsterDefs;
@@ -16,8 +17,8 @@ export function loadLevel(level: types.LevelJSON): void {
   data.setMapHeight(level.height);
 
   if (level.playerStart) {
-    data.playerState.x = level.playerStart.x;
-    data.playerState.y = level.playerStart.y;
+    getPlayer().x = level.playerStart.x;
+    getPlayer().y = level.playerStart.y;
   }
 
   data.mapData.length = 0;
