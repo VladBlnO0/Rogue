@@ -9,11 +9,14 @@ import { TurnManager } from "./turnManager.ts";
 import { waitForPlayerInput } from "./player/controls.ts";
 import { loadLevel } from "./map.ts";
 import { playerDijkstra } from "./math/dijkstra.ts";
-import { spawnEntitiesForLevel } from "./entity.ts";
+import { activeMonsters, spawnEntitiesForLevel } from "./entity.ts";
 import { createPlayer, getPlayer } from "./player/player.ts";
+import { updateHUD } from "./ui.ts";
 
 (async () => {
   console.dir(data.mapData);
+
+  const canvasContainer = document.getElementById("canvas-container")!;
 
   const app = new Application();
   await app.init({
@@ -23,7 +26,7 @@ import { createPlayer, getPlayer } from "./player/player.ts";
     antialias: false,
     roundPixels: true,
   });
-  document.body.appendChild(app.canvas);
+  canvasContainer.appendChild(app.canvas);
 
   await Assets.load("font.xml");
   loadLevel(levelData);
@@ -53,7 +56,7 @@ import { createPlayer, getPlayer } from "./player/player.ts";
     }
   }
 
-  const player = createPlayer("Hero", "mage", getPlayer().x, getPlayer().y);
+  const player = createPlayer("Hero", "warrior", getPlayer().x, getPlayer().y);
 
   console.log("Player Class:", player.className);
   console.log("HP:", player.hp, "/", player.maxHp);
@@ -75,10 +78,25 @@ import { createPlayer, getPlayer } from "./player/player.ts";
   playerSprite.zIndex = 2;
   app.stage.addChild(playerSprite);
 
-  // --- 60 FPS ---
-  app.ticker.add((_time) => {
-    playerSprite.x = getPlayer().x * data.TILE_SIZE;
-    playerSprite.y = getPlayer().y * data.TILE_SIZE;
+  // --- Ticker ---
+  const LERP_SPEED = 0.25;
+  app.ticker.add((ticker) => {
+    updateHUD();
+
+    const targetX = getPlayer().x * data.TILE_SIZE;
+    const targetY = getPlayer().y * data.TILE_SIZE;
+
+    playerSprite.x +=
+      (targetX - playerSprite.x) * LERP_SPEED * ticker.deltaTime;
+    playerSprite.y +=
+      (targetY - playerSprite.y) * LERP_SPEED * ticker.deltaTime;
+
+    if (Math.abs(targetX - playerSprite.x) < 0.1) playerSprite.x = targetX;
+    if (Math.abs(targetY - playerSprite.y) < 0.1) playerSprite.y = targetY;
+
+    for (const monster of activeMonsters) {
+      monster.update(ticker.deltaTime);
+    }
   });
 
   const turnManager = new TurnManager();

@@ -1,6 +1,7 @@
 import { setTimeValue, time } from "./time.ts";
 
 import type * as types from "./types/types.d.ts";
+import { showGameOver } from "./ui.ts";
 
 export class TurnManager {
   private entities: types.Entity[] = [];
@@ -21,6 +22,7 @@ export class TurnManager {
   gameOver() {
     this.isGameOver = true;
     console.log("--- GAME OVER ---");
+    showGameOver();
   }
 
   async runTurnLoop(
@@ -60,7 +62,6 @@ export class TurnManager {
           }
         }
       }
-      console.log("--- GAME OVER ---");
     }
   }
 }

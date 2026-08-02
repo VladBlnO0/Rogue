@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>roguelike-js</title>
     <style>
@@ -10,6 +9,50 @@
     </style>
   </head>
   <body>
+    <div id="game-layout">
+      <aside id="sidebar">
+        <h2 id="ui-name">Hero</h2>
+
+        <div class="stat-group">
+          <label>Class:</label> <span id="ui-class">-</span>
+        </div>
+
+        <div class="stat-group">
+          <label>Time:</label> <span id="ui-time">00:00:00</span>
+        </div>
+
+        <div class="bar-container">
+          <div class="bar-label">HP: <span id="ui-hp">0/0</span></div>
+
+          <div class="bar-bg">
+            <div id="bar-hp-fill" class="bar-fill hp"></div>
+          </div>
+        </div>
+
+        <div class="bar-container">
+          <div class="bar-label">Mana: <span id="ui-mana">0/0</span></div>
+
+          <div class="bar-bg">
+            <div id="bar-mana-fill" class="bar-fill mana"></div>
+          </div>
+        </div>
+      </aside>
+
+      <main id="main-area">
+        <div id="canvas-container">
+          <div id="game-over-overlay" class="hidden">
+            <div class="modal-content">
+              <h1>GAME OVER</h1>
+              <p>You have been slain in the dungeon!</p>
+              <button onclick="window.location.reload()">Try Again</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="message-log"></div>
+      </main>
+    </div>
+
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>

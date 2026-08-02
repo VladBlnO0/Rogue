@@ -1,4 +1,4 @@
-import { Container } from "pixi.js";
+import type { Container } from "pixi.js";
 import monsterDefs from "../data/entities/monsters.json" with { type: "json" };
 import type * as types from "./types/types.d.ts";
 import type { TurnManager } from "./turnManager.ts";

@@ -5,6 +5,7 @@ import type * as types from "../types/types.d.ts";
 import classDefs from "../../data/player/classes.json" with { type: "json" };
 import skillDefs from "../../data/player/skills.json" with { type: "json" };
 import spellDefs from "../../data/player/spells.json" with { type: "json" };
+import { Class } from "../types/class.ts";
 export const CLASSES: Record<string, types.ClassDefinition> = classDefs;
 export const SKILLS: Record<string, types.SkillDefinition> = skillDefs;
 export const SPELLS: Record<string, types.SpellDefinition> = spellDefs;
@@ -36,7 +37,7 @@ export class Player {
     startX: number,
     startY: number,
   ) {
-    const classData = CLASSES[classKey] || CLASSES["warrior"];
+    const classData = CLASSES[classKey] as types.ClassDefinition;
 
     this.id = id;
     this.name = name;
@@ -125,7 +126,7 @@ export function getPlayer(): Player {
     activePlayer = new Player(
       "player",
       "Hero",
-      "warrior",
+      Class.warrior,
       data.playerState.x,
       data.playerState.y,
     );
@@ -135,7 +136,7 @@ export function getPlayer(): Player {
 
 export function createPlayer(
   name: string,
-  classKey: string,
+  classKey: "warrior" | "mage" | "rogue",
   startX: number,
   startY: number,
 ): Player {

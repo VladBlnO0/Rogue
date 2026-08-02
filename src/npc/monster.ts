@@ -7,6 +7,7 @@ import * as isOccupied from "../func/isOccupied.ts";
 import type { TurnManager } from "../turnManager.ts";
 import { activeMonsters } from "../entity.ts";
 import { getPlayer } from "../player/player.ts";
+import { logMessage } from "../ui.ts";
 
 export class Monster {
   public id: string;
@@ -18,6 +19,7 @@ export class Monster {
   public hp: number;
   public maxHp: number;
 
+  public strength: number;
   public actionCost: number;
   public sprite: Text;
 
@@ -38,6 +40,8 @@ export class Monster {
     this.speed = definition.speed;
     this.hp = definition.hp;
     this.maxHp = definition.hp;
+
+    this.strength = 1;
 
     this.actionCost = 1;
 
@@ -68,7 +72,7 @@ export class Monster {
     const nextStep = playerDijkstra.getNextStep(this.x, this.y);
 
     console.log(getPlayer().x, getPlayer().y);
-    
+
     if (this.isPlayerAt(nextStep.x, nextStep.y)) {
       this.attackPlayer();
       return;
@@ -104,6 +108,9 @@ export class Monster {
     console.log(`${this.name} attacks the player!`);
     const player = getPlayer();
     player.takeDamage(10, this.turnManager);
+    logMessage(
+      `Player took ${this.strength} damage! (${this.hp}/${this.maxHp} HP left)`,
+    );
   }
 
   private tryMoveTo(targetX: number, targetY: number): void {
@@ -121,12 +128,6 @@ export class Monster {
 
     this.x = targetX;
     this.y = targetY;
-    this.updateSpritePosition();
-  }
-
-  private updateSpritePosition(): void {
-    this.sprite.x = this.x * data.TILE_SIZE;
-    this.sprite.y = this.y * data.TILE_SIZE;
   }
 
   public takeDamage(amount: number, turnManager: TurnManager): void {
@@ -161,5 +162,17 @@ export class Monster {
     this.sprite.text = corpseTile.character;
     this.sprite.style.fill = corpseTile.tint;
     this.sprite.zIndex = 1;
+  }
+
+  public update(deltaTime: number): void {
+    const targetX = this.x * data.TILE_SIZE;
+    const targetY = this.y * data.TILE_SIZE;
+    const LERP_SPEED = 0.25;
+
+    this.sprite.x += (targetX - this.sprite.x) * LERP_SPEED * deltaTime;
+    this.sprite.y += (targetY - this.sprite.y) * LERP_SPEED * deltaTime;
+
+    if (Math.abs(targetX - this.sprite.x) < 0.1) this.sprite.x = targetX;
+    if (Math.abs(targetY - this.sprite.y) < 0.1) this.sprite.y = targetY;
   }
 }
