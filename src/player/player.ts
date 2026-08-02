@@ -88,7 +88,13 @@ export class Player {
 
   public takeDamage(amount: number, turnManager: TurnManager): void {
     const actualDamage = Math.max(1, amount - this.defense);
-    this.hp -= actualDamage;
+
+    // HP doesn't go below 0
+    const damage = (this.hp -= actualDamage);
+    if (damage < 0) {
+      this.hp = 0;
+    }
+
     console.log(
       `Player took ${actualDamage} damage! (${this.hp}/${this.maxHp} HP left)`,
     );

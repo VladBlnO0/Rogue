@@ -51,7 +51,6 @@ export class TurnManager {
               console.debug(
                 `Player took an action costing ${energyCost} energy`,
               );
-              console.log(`Current time: ${time.join(":")}`);
             } else {
               console.debug("Player did nothing");
             }

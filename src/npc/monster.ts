@@ -71,8 +71,6 @@ export class Monster {
 
     const nextStep = playerDijkstra.getNextStep(this.x, this.y);
 
-    console.log(getPlayer().x, getPlayer().y);
-
     if (this.isPlayerAt(nextStep.x, nextStep.y)) {
       this.attackPlayer();
       return;
