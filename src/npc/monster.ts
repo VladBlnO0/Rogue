@@ -179,13 +179,12 @@ export class Monster {
     this.sprite.zIndex = 1;
   }
 
-  public update(deltaTime: number): void {
+  public update(): void {
     const targetX = this.x * data.TILE_SIZE;
     const targetY = this.y * data.TILE_SIZE;
-    const LERP_SPEED = 0.25;
 
-    this.sprite.x += (targetX - this.sprite.x) * LERP_SPEED * deltaTime;
-    this.sprite.y += (targetY - this.sprite.y) * LERP_SPEED * deltaTime;
+    this.sprite.x += targetX - this.sprite.x;
+    this.sprite.y += targetY - this.sprite.y;
 
     if (Math.abs(targetX - this.sprite.x) < 0.1) this.sprite.x = targetX;
     if (Math.abs(targetY - this.sprite.y) < 0.1) this.sprite.y = targetY;

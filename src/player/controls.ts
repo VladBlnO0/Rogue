@@ -151,6 +151,9 @@ export function waitForPlayerInput(turnManager: TurnManager): Promise<number> {
 
         case "w": {
           console.log("You wait for a moment...");
+
+          getPlayer().hp = Math.min(getPlayer().maxHp, getPlayer().hp + 1);
+
           globalThis.removeEventListener("keydown", handleInput);
           resolve(1);
           break;

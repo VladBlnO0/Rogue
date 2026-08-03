@@ -79,23 +79,20 @@ import { updateHUD } from "./ui.ts";
   app.stage.addChild(playerSprite);
 
   // --- Ticker ---
-  const LERP_SPEED = 0.25;
   app.ticker.add((ticker) => {
     updateHUD();
 
     const targetX = getPlayer().x * data.TILE_SIZE;
     const targetY = getPlayer().y * data.TILE_SIZE;
 
-    playerSprite.x +=
-      (targetX - playerSprite.x) * LERP_SPEED * ticker.deltaTime;
-    playerSprite.y +=
-      (targetY - playerSprite.y) * LERP_SPEED * ticker.deltaTime;
+    playerSprite.x += targetX - playerSprite.x;
+    playerSprite.y += targetY - playerSprite.y;
 
     if (Math.abs(targetX - playerSprite.x) < 0.1) playerSprite.x = targetX;
     if (Math.abs(targetY - playerSprite.y) < 0.1) playerSprite.y = targetY;
 
     for (const monster of activeMonsters) {
-      monster.update(ticker.deltaTime);
+      monster.update();
     }
   });
 
