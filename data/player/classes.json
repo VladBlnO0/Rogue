@@ -8,6 +8,7 @@
     "speed": 1.0,
     "attackPower": 5,
     "defense": 3,
+    "stamina": 150,
     "mana": 0,
     "startingSkills": [
       "swordsmanship",
@@ -24,6 +25,7 @@
     "speed": 1.0,
     "attackPower": 2,
     "defense": 1,
+    "stamina": 90,
     "mana": 50,
     "startingSkills": [
       "alchemy"
@@ -43,6 +45,7 @@
     "speed": 1.2,
     "attackPower": 4,
     "defense": 2,
+    "stamina": 200,
     "mana": 10,
     "startingSkills": [
       "stealth",

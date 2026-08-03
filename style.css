@@ -160,6 +160,9 @@ body {
 .bar-fill.hp {
   background-color: #e63946;
 }
+.bar-fill.stamina {
+  background-color: #4caf50;
+}
 .bar-fill.mana {
   background-color: #1d3557;
 }
@@ -178,18 +181,6 @@ body {
   align-items: center;
   justify-content: center;
   background-color: #000000;
-}
-
-#message-log {
-  height: 120px;
-  background-color: #141414;
-  border-top: 2px solid #333333;
-  padding: 8px 12px;
-  overflow-y: auto;
-  font-size: 13px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
 #game-over-overlay {

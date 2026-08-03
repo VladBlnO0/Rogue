@@ -21,9 +21,15 @@ export class Player {
 
   public hp: number;
   public maxHp: number;
+
   public mana: number;
   public maxMana: number;
+
+  public stamina: number;
+  public maxStamina: number;
+
   public speed: number;
+
   public attackPower: number;
   public defense: number;
 
@@ -49,9 +55,15 @@ export class Player {
 
     this.hp = classData.hp;
     this.maxHp = classData.hp;
+
     this.mana = classData.mana;
     this.maxMana = classData.mana;
+
+    this.stamina = classData.stamina;
+    this.maxStamina = classData.stamina;
+
     this.speed = classData.speed;
+
     this.attackPower = classData.attackPower;
     this.defense = classData.defense;
 

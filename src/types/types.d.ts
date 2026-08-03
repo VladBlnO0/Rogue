@@ -17,6 +17,7 @@ export interface MonsterDefinition {
   speed: number;
   attackPower: number;
   ai: string;
+  seeingDistance: number;
 }
 
 export interface LevelJSON {
@@ -61,6 +62,7 @@ export interface ClassDefinition {
   speed: number;
   attackPower: number;
   defense: number;
+  stamina: number;
   mana: number;
   startingSkills: string[];
   startingSpells?: string[];

@@ -7,7 +7,8 @@
     "hp": 15,
     "speed": 0.7,
     "attackPower": 5,
-    "ai": "chasePlayer"
+    "ai": "chasePlayer",
+    "seeingDistance": 3
   },
   "kobold": {
     "id": "kobold",
@@ -17,7 +18,8 @@
     "hp": 12,
     "speed": 1.0,
     "attackPower": 3,
-    "ai": "chasePlayer"
+    "ai": "chasePlayer",
+    "seeingDistance": 5
   },
   "goblin_warrior": {
     "id": "goblin_warrior",
@@ -27,6 +29,7 @@
     "hp": 25,
     "speed": 0.8,
     "attackPower": 7,
-    "ai": "chasePlayer"
+    "ai": "chasePlayer",
+    "seeingDistance": 5
   }
 }

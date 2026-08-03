@@ -11,6 +11,9 @@ export function updateHUD(): void {
   const hpEl = document.getElementById("ui-hp");
   const hpFill = document.getElementById("bar-hp-fill");
 
+  const staminaEl = document.getElementById("ui-stamina");
+  const staminaFill = document.getElementById("bar-stamina-fill");
+
   const manaEl = document.getElementById("ui-mana");
   const manaFill = document.getElementById("bar-mana-fill");
 
@@ -24,22 +27,21 @@ export function updateHUD(): void {
     hpFill.style.width = `${hpPercent}%`;
   }
 
+  if (staminaEl)
+    staminaEl.textContent = `${player.stamina}/${player.maxStamina}`;
+  if (staminaFill) {
+    const staminaPercent = Math.max(
+      0,
+      (player.stamina / player.maxStamina) * 100,
+    );
+    staminaFill.style.width = `${staminaPercent}%`;
+  }
+
   if (manaEl) manaEl.textContent = `${player.mana}/${player.maxMana}`;
   if (manaFill) {
     const manaPercent = Math.max(0, (player.mana / player.maxMana) * 100);
     manaFill.style.width = `${manaPercent}%`;
   }
-}
-
-export function logMessage(message: string): void {
-  const logEl = document.getElementById("message-log");
-  if (!logEl) return;
-
-  const msgDiv = document.createElement("div");
-  msgDiv.textContent = `> ${message}`;
-  logEl.appendChild(msgDiv);
-
-  logEl.scrollTop = logEl.scrollHeight;
 }
 
 export function showGameOver(): void {

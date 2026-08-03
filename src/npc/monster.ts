@@ -7,7 +7,8 @@ import * as isOccupied from "../func/isOccupied.ts";
 import type { TurnManager } from "../turnManager.ts";
 import { activeMonsters } from "../entity.ts";
 import { getPlayer } from "../player/player.ts";
-import { logMessage } from "../ui.ts";
+
+import { wander } from "./func/wander.ts";
 
 export class Monster {
   public id: string;
@@ -24,6 +25,8 @@ export class Monster {
   public sprite: Text;
 
   private turnManager: TurnManager;
+
+  private seeingDistance: number;
 
   constructor(
     id: string,
@@ -44,6 +47,8 @@ export class Monster {
     this.strength = 1;
 
     this.actionCost = 1;
+
+    this.seeingDistance = definition.seeingDistance;
 
     this.sprite = new Text({
       text: definition.character,
@@ -67,16 +72,19 @@ export class Monster {
   public takeTurn(): void {
     if (!this.isAlive()) return;
 
-    if (!this.isPlayerInRange(10)) return;
+    if (this.isPlayerInRange(this.seeingDistance)) {
+      const nextStep = playerDijkstra.getNextStep(this.x, this.y);
 
-    const nextStep = playerDijkstra.getNextStep(this.x, this.y);
+      if (this.isPlayerAt(nextStep.x, nextStep.y)) {
+        this.attackPlayer();
+        return;
+      }
 
-    if (this.isPlayerAt(nextStep.x, nextStep.y)) {
-      this.attackPlayer();
-      return;
+      this.tryMoveTo(nextStep.x, nextStep.y);
+    } else {
+      const target = wander(this.x, this.y);
+      this.tryMoveTo(target.x, target.y);
     }
-
-    this.tryMoveTo(nextStep.x, nextStep.y);
   }
 
   private isAlive(): boolean {
@@ -103,29 +111,38 @@ export class Monster {
   }
 
   private attackPlayer(): void {
-    console.log(`${this.name} attacks the player!`);
     const player = getPlayer();
     player.takeDamage(10, this.turnManager);
-    logMessage(
+    console.log(
       `Player took ${this.strength} damage! (${this.hp}/${this.maxHp} HP left)`,
     );
   }
 
   private tryMoveTo(targetX: number, targetY: number): void {
+    if (
+      targetX < 0 ||
+      targetX >= data.MAP_WIDTH ||
+      targetY < 0 ||
+      targetY >= data.MAP_HEIGHT
+    ) {
+      return;
+    }
+
+    const targetTile = data.mapData[targetY][targetX];
     const otherMonster = isOccupied.getMonsterAt(targetX, targetY, this.id);
 
     if (otherMonster) {
-      console.log(`${this.name} is blocked by ${otherMonster.name}.`);
       return;
     }
 
     if (targetX === getPlayer().x && targetY === getPlayer().y) {
-      console.log(`${this.name} is blocked by player.`);
       return;
     }
 
-    this.x = targetX;
-    this.y = targetY;
+    if (targetTile && targetTile.walkable) {
+      this.x = targetX;
+      this.y = targetY;
+    }
   }
 
   public takeDamage(amount: number, turnManager: TurnManager): void {
