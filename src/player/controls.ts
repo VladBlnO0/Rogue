@@ -154,6 +154,10 @@ export function waitForPlayerInput(turnManager: TurnManager): Promise<number> {
 
           getPlayer().hp = Math.min(getPlayer().maxHp, getPlayer().hp + 1);
 
+          console.log(
+            `You feel a bit better. HP: ${getPlayer().hp}/${getPlayer().maxHp}`,
+          );
+
           globalThis.removeEventListener("keydown", handleInput);
           resolve(1);
           break;

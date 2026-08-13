@@ -1,9 +1,11 @@
-import { Application, Container, Assets, Text } from "pixi.js";
+import { Application, Container, Assets, Text, Graphics } from "pixi.js";
 
 import * as data from "./data.ts";
+import type * as types from "./types/types.d.ts";
+
 import "./player/player.ts";
 
-import levelData from "../data/level/level1.json" with { type: "json" };
+import jsonMapData from "../data/level/1 - Start/level1.json" with { type: "json" };
 
 import { TurnManager } from "./turnManager.ts";
 import { waitForPlayerInput } from "./player/controls.ts";
@@ -29,30 +31,56 @@ import { updateHUD } from "./ui.ts";
   canvasContainer.appendChild(app.canvas);
 
   await Assets.load("font.xml");
-  loadLevel(levelData);
 
+  const mapData = jsonMapData as types.LevelJSON;
+  loadLevel(mapData);
+
+  if (jsonMapData.playerStart) {
+    getPlayer().x = jsonMapData.playerStart.x;
+    getPlayer().y = jsonMapData.playerStart.y;
+  }
+
+  const bgGraphics = new Graphics();
   const mapContainer = new Container();
+  const entityContainer = new Container();
+
+  app.stage.addChild(bgGraphics);
   app.stage.addChild(mapContainer);
+  app.stage.addChild(entityContainer);
+
+  if (jsonMapData.playerStart) {
+    getPlayer().x = jsonMapData.playerStart.x;
+    getPlayer().y = jsonMapData.playerStart.y;
+  }
 
   for (let y = 0; y < data.MAP_HEIGHT; y++) {
     for (let x = 0; x < data.MAP_WIDTH; x++) {
       const tile = data.mapData[y][x];
-
       if (!tile) continue;
 
-      const tileSprite = new Text({
-        text: tile.character,
-        style: {
-          fontFamily: "monospace",
-          fontSize: data.TILE_SIZE,
-          fontWeight: "bold",
-          fill: tile.tint,
-        },
-        roundPixels: true,
-      });
-      tileSprite.x = x * data.TILE_SIZE;
-      tileSprite.y = y * data.TILE_SIZE;
-      mapContainer.addChild(tileSprite);
+      const px = x * data.TILE_SIZE;
+      const py = y * data.TILE_SIZE;
+
+      if (tile.background && tile.background !== "#000000") {
+        bgGraphics.rect(px, py, data.TILE_SIZE, data.TILE_SIZE);
+        bgGraphics.fill(tile.background);
+      }
+
+      if (tile.character && tile.character !== " ") {
+        const tileSprite = new Text({
+          text: tile.character,
+          style: {
+            fontFamily: "monospace",
+            fontSize: data.TILE_SIZE,
+            fontWeight: "bold",
+            fill: tile.foreground || "#ffffff",
+          },
+          roundPixels: true,
+        });
+        tileSprite.x = px;
+        tileSprite.y = py;
+        mapContainer.addChild(tileSprite);
+      }
     }
   }
 
@@ -76,10 +104,11 @@ import { updateHUD } from "./ui.ts";
     roundPixels: true,
   });
   playerSprite.zIndex = 2;
-  app.stage.addChild(playerSprite);
+
+  entityContainer.addChild(playerSprite);
 
   // --- Ticker ---
-  app.ticker.add((ticker) => {
+  app.ticker.add(() => {
     updateHUD();
 
     const targetX = getPlayer().x * data.TILE_SIZE;
@@ -98,6 +127,10 @@ import { updateHUD } from "./ui.ts";
 
   const turnManager = new TurnManager();
 
+  spawnEntitiesForLevel(jsonMapData.entities, entityContainer, turnManager);
+
+  playerDijkstra.update(getPlayer().x, getPlayer().y);
+
   turnManager.addEntity({
     id: "player",
     isPlayer: true,
@@ -106,16 +139,5 @@ import { updateHUD } from "./ui.ts";
     takeTurn: () => {},
   });
 
-  playerDijkstra.update(getPlayer().x, getPlayer().y);
-
-  spawnEntitiesForLevel(levelData.entities, app.stage, turnManager);
-
-  const handlePlayerTurn = async (): Promise<number> => {
-    const cost = await waitForPlayerInput(turnManager);
-    playerDijkstra.update(getPlayer().x, getPlayer().y);
-    return cost;
-  };
-
-  await turnManager.runTurnLoop(handlePlayerTurn);
-  await turnManager.runTurnLoop(waitForPlayerInput);
+  await turnManager.runTurnLoop((tm) => waitForPlayerInput(tm));
 })();

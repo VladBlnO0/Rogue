@@ -2,17 +2,20 @@ export interface TileDefinition {
   id: number;
   name: string;
   character: string;
-  tint: string;
+  foreground: string;
+  background?: string;
   walkable: boolean;
   transparent: boolean;
   description: string;
+  z: number;
 }
 
 export interface MonsterDefinition {
   id: string;
   name: string;
   character: string;
-  tint: string;
+  foreground: string;
+  background?: string;
   hp: number;
   speed: number;
   attackPower: number;
@@ -26,7 +29,7 @@ export interface LevelJSON {
   height: number;
   playerStart?: { x: number; y: number };
   layout: string[];
-  legend: Record<string, string>;
+  legend: Record<string, number>;
   entities?: { type: string; x: number; y: number }[];
 }
 
@@ -57,7 +60,8 @@ export interface ClassDefinition {
   id: string;
   name: string;
   character: string;
-  tint: string;
+  foreground: string;
+  background?: string;
   hp: number;
   speed: number;
   attackPower: number;

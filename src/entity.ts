@@ -10,7 +10,7 @@ export const activeMonsters: Monster[] = [];
 
 export function spawnEntitiesForLevel(
   levelEntities: types.LevelJSON["entities"],
-  stage: Container,
+  entityContainer: Container,
   turnManager: TurnManager,
 ): void {
   activeMonsters.length = 0;
@@ -30,7 +30,7 @@ export function spawnEntitiesForLevel(
       definition,
       spawn.x,
       spawn.y,
-      stage,
+      entityContainer,
       turnManager,
     );
     activeMonsters.push(monster);

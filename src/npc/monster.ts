@@ -21,6 +21,9 @@ export class Monster {
   public maxHp: number;
 
   public strength: number;
+
+  public attackPower: number;
+
   public actionCost: number;
   public sprite: Text;
 
@@ -46,6 +49,8 @@ export class Monster {
 
     this.strength = 1;
 
+    this.attackPower = definition.attackPower;
+
     this.actionCost = 1;
 
     this.seeingDistance = definition.seeingDistance;
@@ -56,7 +61,7 @@ export class Monster {
         fontFamily: "monospace",
         fontSize: data.TILE_SIZE,
         fontWeight: "bold",
-        fill: definition.tint,
+        fill: definition.foreground || 0xffffff,
       },
       roundPixels: true,
     });
@@ -112,10 +117,8 @@ export class Monster {
 
   private attackPlayer(): void {
     const player = getPlayer();
-    player.takeDamage(10, this.turnManager);
-    console.log(
-      `Player took ${this.strength} damage! (${this.hp}/${this.maxHp} HP left)`,
-    );
+
+    player.takeDamage(this.attackPower, this.turnManager);
   }
 
   private tryMoveTo(targetX: number, targetY: number): void {
@@ -147,6 +150,7 @@ export class Monster {
 
   public takeDamage(amount: number, turnManager: TurnManager): void {
     this.hp -= amount;
+
     console.log(
       `${this.name} took ${amount} damage (${this.hp}/${this.maxHp} HP left)`,
     );
@@ -169,13 +173,13 @@ export class Monster {
 
     const corpseTile = data.mapData[this.y][this.x];
     corpseTile.character = "%";
-    corpseTile.tint = "#8B0000";
+    corpseTile.foreground = "#8B0000";
     corpseTile.walkable = true;
 
     data.mapData[this.y][this.x] = corpseTile;
 
     this.sprite.text = corpseTile.character;
-    this.sprite.style.fill = corpseTile.tint;
+    this.sprite.style.fill = corpseTile.foreground;
     this.sprite.zIndex = 1;
   }
 

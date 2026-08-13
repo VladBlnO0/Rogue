@@ -6,6 +6,7 @@ import classDefs from "../../data/player/classes.json" with { type: "json" };
 import skillDefs from "../../data/player/skills.json" with { type: "json" };
 import spellDefs from "../../data/player/spells.json" with { type: "json" };
 import { Class } from "../types/class.ts";
+import { updateHUD } from "../ui.ts";
 export const CLASSES: Record<string, types.ClassDefinition> = classDefs;
 export const SKILLS: Record<string, types.SkillDefinition> = skillDefs;
 export const SPELLS: Record<string, types.SpellDefinition> = spellDefs;
@@ -99,7 +100,7 @@ export class Player {
   }
 
   public takeDamage(amount: number, turnManager: TurnManager): void {
-    const actualDamage = Math.max(1, amount - this.defense);
+    const actualDamage = amount - this.defense;
 
     // HP doesn't go below 0
     const damage = (this.hp -= actualDamage);
@@ -110,6 +111,8 @@ export class Player {
     console.log(
       `Player took ${actualDamage} damage! (${this.hp}/${this.maxHp} HP left)`,
     );
+
+    updateHUD();
 
     if (this.hp <= 0) {
       this.die(turnManager);
