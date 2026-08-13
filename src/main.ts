@@ -41,12 +41,32 @@ import { updateHUD } from "./ui.ts";
   }
 
   const bgGraphics = new Graphics();
-  const mapContainer = new Container();
-  const entityContainer = new Container();
+  const groundLayer = new Container();
+  const objectLayer = new Container();
+  const itemLayer = new Container();
+  const entityLayer = new Container();
+  const playerLayer = new Container();
+
+  function getLayerForZ(z: number): Container {
+    if (z < 0) {
+      return groundLayer;
+    } else if (z === 0) {
+      return objectLayer;
+    } else if (z < 1) {
+      return itemLayer;
+    } else if (z < 2) {
+      return entityLayer;
+    } else {
+      return playerLayer;
+    }
+  }
 
   app.stage.addChild(bgGraphics);
-  app.stage.addChild(mapContainer);
-  app.stage.addChild(entityContainer);
+  app.stage.addChild(groundLayer);
+  app.stage.addChild(objectLayer);
+  app.stage.addChild(itemLayer);
+  app.stage.addChild(entityLayer);
+  app.stage.addChild(playerLayer);
 
   if (jsonMapData.playerStart) {
     getPlayer().x = jsonMapData.playerStart.x;
@@ -79,7 +99,9 @@ import { updateHUD } from "./ui.ts";
         });
         tileSprite.x = px;
         tileSprite.y = py;
-        mapContainer.addChild(tileSprite);
+
+        const targetLayer = getLayerForZ(tile.z ?? 0);
+        targetLayer.addChild(tileSprite);
       }
     }
   }
@@ -105,7 +127,7 @@ import { updateHUD } from "./ui.ts";
   });
   playerSprite.zIndex = 2;
 
-  entityContainer.addChild(playerSprite);
+  playerLayer.addChild(playerSprite);
 
   // --- Ticker ---
   app.ticker.add(() => {
@@ -127,7 +149,7 @@ import { updateHUD } from "./ui.ts";
 
   const turnManager = new TurnManager();
 
-  spawnEntitiesForLevel(jsonMapData.entities, entityContainer, turnManager);
+  spawnEntitiesForLevel(jsonMapData.entities, entityLayer, turnManager);
 
   playerDijkstra.update(getPlayer().x, getPlayer().y);
 
