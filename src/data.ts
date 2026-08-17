@@ -1,6 +1,7 @@
 import type * as types from "./types/types.d.ts";
 
 const TILE_SIZE: number = 32;
+const halfTile = TILE_SIZE / 2;
 
 const playerState: { x: number; y: number } = {
   x: 0,
@@ -19,4 +20,4 @@ export function setMapHeight(height: number): void {
 
 const mapData: types.TileDefinition[][] = [];
 
-export { TILE_SIZE, playerState, MAP_WIDTH, MAP_HEIGHT, mapData };
+export { TILE_SIZE, halfTile, playerState, MAP_WIDTH, MAP_HEIGHT, mapData };

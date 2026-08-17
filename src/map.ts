@@ -1,4 +1,4 @@
-import tileDefs from "../data/tile/tiles.json" with { type: "json" };
+import tileDefs from "../data/tiles/tiles.json" with { type: "json" };
 import * as data from "./data.ts";
 import type * as types from "./types/types.d.ts";
 

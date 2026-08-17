@@ -22,7 +22,7 @@
         </div>
 
         <div class="bar-container">
-          <div class="bar-label">HP: <span id="ui-hp">0/0</span></div>
+          <div class="bar-label">HP: </br> <span id="ui-hp">0/0</span></div>
 
           <div class="bar-bg">
             <div id="bar-hp-fill" class="bar-fill hp"></div>
@@ -30,7 +30,7 @@
         </div>
 
         <div class="bar-container">
-          <div class="bar-label">Stamina: <span id="ui-stamina">0/0</span></div>
+          <div class="bar-label">Stamina: </br> <span id="ui-stamina">0/0</span></div>
 
           <div class="bar-bg">
             <div id="bar-stamina-fill" class="bar-fill stamina"></div>
@@ -38,11 +38,16 @@
         </div>
 
         <div class="bar-container">
-          <div class="bar-label">Mana: <span id="ui-mana">0/0</span></div>
+          <div class="bar-label">Mana: </br> <span id="ui-mana">0/0</span></div>
 
           <div class="bar-bg">
             <div id="bar-mana-fill" class="bar-fill mana"></div>
           </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: auto;">
+          <button id="btn-save-file" style="flex: 1; padding: 6px; cursor: pointer;">Save File</button>
+          <button id="btn-load-file" style="flex: 1; padding: 6px; cursor: pointer;">Load File</button>
         </div>
       </aside>
 

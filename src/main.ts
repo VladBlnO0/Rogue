@@ -15,6 +15,16 @@ import { activeMonsters, spawnEntitiesForLevel } from "./entity.ts";
 import { createPlayer, getPlayer } from "./player/player.ts";
 import { updateHUD } from "./ui.ts";
 
+import {
+  loadPlayerGame,
+  savePlayerGame,
+} from "./save/saveManagerLocalStorage.ts";
+
+import {
+  exportPlayerSaveFile,
+  importPlayerSaveFile,
+} from "./save/saveManagerJson";
+
 (async () => {
   console.dir(data.mapData);
 
@@ -47,6 +57,13 @@ import { updateHUD } from "./ui.ts";
   const entityLayer = new Container();
   const playerLayer = new Container();
 
+  app.stage.addChild(bgGraphics);
+  app.stage.addChild(groundLayer);
+  app.stage.addChild(objectLayer);
+  app.stage.addChild(itemLayer);
+  app.stage.addChild(entityLayer);
+  app.stage.addChild(playerLayer);
+
   function getLayerForZ(z: number): Container {
     if (z < 0) {
       return groundLayer;
@@ -61,13 +78,6 @@ import { updateHUD } from "./ui.ts";
     }
   }
 
-  app.stage.addChild(bgGraphics);
-  app.stage.addChild(groundLayer);
-  app.stage.addChild(objectLayer);
-  app.stage.addChild(itemLayer);
-  app.stage.addChild(entityLayer);
-  app.stage.addChild(playerLayer);
-
   if (jsonMapData.playerStart) {
     getPlayer().x = jsonMapData.playerStart.x;
     getPlayer().y = jsonMapData.playerStart.y;
@@ -81,11 +91,13 @@ import { updateHUD } from "./ui.ts";
       const px = x * data.TILE_SIZE;
       const py = y * data.TILE_SIZE;
 
+      // Background rendering
       if (tile.background && tile.background !== "#000000") {
         bgGraphics.rect(px, py, data.TILE_SIZE, data.TILE_SIZE);
         bgGraphics.fill(tile.background);
       }
 
+      // Foreground rendering
       if (tile.character && tile.character !== " ") {
         const tileSprite = new Text({
           text: tile.character,
@@ -97,8 +109,10 @@ import { updateHUD } from "./ui.ts";
           },
           roundPixels: true,
         });
-        tileSprite.x = px;
-        tileSprite.y = py;
+        tileSprite.anchor.set(0.5);
+
+        tileSprite.x = px + data.halfTile;
+        tileSprite.y = py + data.halfTile;
 
         const targetLayer = getLayerForZ(tile.z ?? 0);
         targetLayer.addChild(tileSprite);
@@ -106,13 +120,32 @@ import { updateHUD } from "./ui.ts";
     }
   }
 
-  const player = createPlayer("Hero", "warrior", getPlayer().x, getPlayer().y);
+  data.playerState.x = getPlayer().x;
+  data.playerState.y = getPlayer().y;
 
-  console.log("Player Class:", player.className);
-  console.log("HP:", player.hp, "/", player.maxHp);
-  console.log("Mana:", player.mana);
-  console.log("Learned Skills:", Array.from(player.skills.keys()));
-  console.log("Known Spells:", Array.from(player.spells.keys()));
+  document.getElementById("btn-save-file")?.addEventListener("click", () => {
+    exportPlayerSaveFile();
+  });
+
+  document
+    .getElementById("btn-load-file")
+    ?.addEventListener("click", async () => {
+      const loaded = await importPlayerSaveFile();
+      if (loaded) {
+        playerDijkstra.update(getPlayer().x, getPlayer().y);
+      }
+    });
+
+  const hasLoaded = loadPlayerGame();
+  if (!hasLoaded) {
+    createPlayer("Hero", "warrior", data.playerState.x, data.playerState.y);
+  }
+
+  console.log("Player Class:", getPlayer().className);
+  console.log("HP:", getPlayer().hp, "/", getPlayer().maxHp);
+  console.log("Mana:", getPlayer().mana);
+  console.log("Learned Skills:", Array.from(getPlayer().skills.keys()));
+  console.log("Known Spells:", Array.from(getPlayer().spells.keys()));
 
   // NEED BITMAP
   const playerSprite = new Text({
@@ -125,6 +158,7 @@ import { updateHUD } from "./ui.ts";
     },
     roundPixels: true,
   });
+  playerSprite.anchor.set(0.5);
   playerSprite.zIndex = 2;
 
   playerLayer.addChild(playerSprite);
@@ -133,8 +167,8 @@ import { updateHUD } from "./ui.ts";
   app.ticker.add(() => {
     updateHUD();
 
-    const targetX = getPlayer().x * data.TILE_SIZE;
-    const targetY = getPlayer().y * data.TILE_SIZE;
+    const targetX = getPlayer().x * data.TILE_SIZE + data.halfTile;
+    const targetY = getPlayer().y * data.TILE_SIZE + data.halfTile;
 
     playerSprite.x += targetX - playerSprite.x;
     playerSprite.y += targetY - playerSprite.y;

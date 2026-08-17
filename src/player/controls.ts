@@ -1,5 +1,6 @@
 import * as data from "../data.ts";
 import * as isOccupied from "../func/isOccupied.ts";
+import { savePlayerGame } from "../save/saveManagerLocalStorage.ts";
 import type { TurnManager } from "../turnManager.ts";
 import { getPlayer } from "./player.ts";
 
@@ -160,6 +161,16 @@ export function waitForPlayerInput(turnManager: TurnManager): Promise<number> {
 
           globalThis.removeEventListener("keydown", handleInput);
           resolve(1);
+          break;
+        }
+
+        case "S": {
+          console.log("Save game");
+
+          savePlayerGame();
+
+          globalThis.removeEventListener("keydown", handleInput);
+          resolve(0);
           break;
         }
 

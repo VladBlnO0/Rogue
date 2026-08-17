@@ -65,10 +65,11 @@ export class Monster {
       },
       roundPixels: true,
     });
+    this.sprite.anchor.set(0.5);
     this.sprite.zIndex = 2;
 
-    this.sprite.x = x * data.TILE_SIZE;
-    this.sprite.y = y * data.TILE_SIZE;
+    this.sprite.x = x * data.TILE_SIZE + data.halfTile;
+    this.sprite.y = y * data.TILE_SIZE + data.halfTile;
     stage.addChild(this.sprite);
 
     this.turnManager = turnManager;
@@ -181,11 +182,12 @@ export class Monster {
     this.sprite.text = corpseTile.character;
     this.sprite.style.fill = corpseTile.foreground;
     this.sprite.zIndex = 1;
+    this.sprite.anchor.set(0.5);
   }
 
   public update(): void {
-    const targetX = this.x * data.TILE_SIZE;
-    const targetY = this.y * data.TILE_SIZE;
+    const targetX = this.x * data.TILE_SIZE + data.halfTile;
+    const targetY = this.y * data.TILE_SIZE + data.halfTile;
 
     this.sprite.x += targetX - this.sprite.x;
     this.sprite.y += targetY - this.sprite.y;

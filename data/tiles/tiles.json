@@ -1,0 +1,57 @@
+{
+  "stone_wall": {
+    "id": 0,
+    "name": "Stone Wall",
+    "description": "A solid wall made of stone blocks.",
+    "character": "#",
+    "foreground": "#7a7a7a",
+    "background": "#222222",
+    "walkable": false,
+    "transparent": false,
+    "z": 0
+  },
+  "dirt_floor": {
+    "id": 1,
+    "name": "Dirt Floor",
+    "description": "A simple dirt floor, easy to walk on.",
+    "character": ".",
+    "foreground": "#5a4325",
+    "background": "#1c140a",
+    "walkable": true,
+    "transparent": true,
+    "z": -1
+  },
+  "grass": {
+    "id": 2,
+    "name": "Grass",
+    "description": "A patch of green grass, soft underfoot.",
+    "character": ",",
+    "foreground": "#2e8b57",
+    "background": "#0d260d",
+    "walkable": true,
+    "transparent": true,
+    "z": -1
+  },
+  "deep_water": {
+    "id": 3,
+    "name": "Deep Water",
+    "description": "A deep body of water, impassable without a boat.",
+    "character": "~",
+    "foreground": "#00ffff",
+    "background": "#00008b",
+    "walkable": false,
+    "transparent": true,
+    "z": -1
+  },
+  "pavement": {
+    "id": 4,
+    "name": "Asphalt Pavement",
+    "description": "A smooth asphalt pavement, easy to walk on.",
+    "character": ".",
+    "foreground": "#444444",
+    "background": "#1a1a1a",
+    "walkable": true,
+    "transparent": true,
+    "z": -1
+  }
+}
